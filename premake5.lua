@@ -14,6 +14,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["glm"] = "Mighty/vendor/glm"
+IncludeDir["imgui"] = "Mighty/vendor/imgui"
 IncludeDir["lua"] = "Mighty/vendor/lua"
 IncludeDir["sdl"] = "Mighty/vendor/sdl"
 
@@ -36,6 +37,8 @@ project "Mighty"
     "%{prj.name}/src/**.cpp",
     "%{prj.name}/vendor/glm/glm/**.hpp",
     "%{prj.name}/vendor/glm/glm/**.inl",
+    "%{prj.name}/vendor/imgui/**.h",
+    "%{prj.name}/vendor/imgui/**.cpp",
     "%{prj.name}/vendor/lua/**.h",
     "%{prj.name}/vendor/lua/**.hpp",
     "%{prj.name}/vendor/sdl/include/**.h"
@@ -50,6 +53,7 @@ project "Mighty"
   {
     "%{prj.name}/src",
     "%{IncludeDir.glm}/glm",
+    "%{IncludeDir.imgui}",
     "%{IncludeDir.lua}",
     "%{IncludeDir.sdl}/include"
   }
