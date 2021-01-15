@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <SDL.h>
+#include <SDL_image.h>
 
 #include "Game.h"
 
@@ -22,8 +23,8 @@ void Game::Initialize() {
 	// Get window dimensions
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
-	windowWidth = 800; // displayMode.w;
-	windowHeight = 600; // displayMode.h;
+	windowWidth = displayMode.w; // 800
+	windowHeight = displayMode.h; // 600
 
 	window = SDL_CreateWindow(
 		"Mighty Game Engine",
@@ -49,7 +50,12 @@ void Game::Initialize() {
 	isRunning = true;
 }
 
+void Game::Setup() {
+
+}
+
 void Game::Run() {
+	Setup();
 	while (isRunning) {
 		ProcessInput();
 		Update();
@@ -77,10 +83,18 @@ void Game::Update() {
 }
 
 void Game::Render() {
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
 	SDL_RenderClear(renderer);
 
-	// TODO: Render game entities
+	// Draw PNG texture
+	SDL_Surface *surface = IMG_Load("./assets/images/tank-tiger-right.png");
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+
+	SDL_Rect destRect = { 10, 10, 32, 32 };
+	SDL_RenderCopy(renderer, texture, NULL, &destRect);
+	SDL_DestroyTexture(texture);
+
 
 	SDL_RenderPresent(renderer);
 }
