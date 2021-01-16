@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <glm.hpp>
 
 #include "Game.h"
 
@@ -50,8 +51,12 @@ void Game::Initialize() {
 	isRunning = true;
 }
 
+// TODO: This will eventually move to a transform component
+glm::vec2 playerPosition;
+glm::vec2 playerVelocity;
 void Game::Setup() {
-
+	playerPosition = glm::vec2(10.0, 20.0);
+	playerVelocity = glm::vec2(0.05, 0.00);
 }
 
 void Game::Run() {
@@ -80,6 +85,8 @@ void Game::ProcessInput() {
 }
 
 void Game::Update() {
+	playerPosition.x += playerVelocity.x;
+	playerPosition.y += playerVelocity.y;
 }
 
 void Game::Render() {
@@ -91,7 +98,12 @@ void Game::Render() {
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);
 
-	SDL_Rect destRect = { 10, 10, 32, 32 };
+	SDL_Rect destRect = {
+		static_cast<int>(playerPosition.x),
+		static_cast<int>(playerPosition.y),
+		32,
+		32
+	};
 	SDL_RenderCopy(renderer, texture, NULL, &destRect);
 	SDL_DestroyTexture(texture);
 
