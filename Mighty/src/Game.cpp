@@ -56,7 +56,7 @@ glm::vec2 playerPosition;
 glm::vec2 playerVelocity;
 void Game::Setup() {
 	playerPosition = glm::vec2(10.0, 20.0);
-	playerVelocity = glm::vec2(0.05, 0.00);
+	playerVelocity = glm::vec2(0.5, 0.5);
 }
 
 void Game::Run() {
@@ -85,6 +85,13 @@ void Game::ProcessInput() {
 }
 
 void Game::Update() {
+	// Limit FPS (for now)
+	int timeToWait = MILLISECONDS_PER_FRAME - SDL_GetTicks() + millisecondsPreviousFrame;
+	if (timeToWait > 0 && timeToWait <= MILLISECONDS_PER_FRAME) {
+		SDL_Delay(timeToWait);
+	}
+	millisecondsPreviousFrame = SDL_GetTicks();
+
 	playerPosition.x += playerVelocity.x;
 	playerPosition.y += playerVelocity.y;
 }
