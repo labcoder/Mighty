@@ -125,19 +125,11 @@ public:
   template <typename T> bool HasComponent(Entity entity) const;
 
   // Systems
-  void AddEntityToSystem(Entity entity);
-
-  // TODO:
-  // CreateEntity()
-  // DestroyEntity()
-  // AddComponent(Entity entity)
-  // RemoveComponent(Entity entity)
-  // HasComponent(Entity entity)
-  // GetComponent(Entity entity)
-  // AddSystem()
-  // RemoveSystem()
-  // HasSystem()
-  // GetSystem()
+  template <typename T, typename ...TArgs> void AddSystem(TArgs&& ...args);
+  template <typename T> void RemoveSystem();
+  template <typename T> bool HasSystem() const;
+  template <typename T> T& GetSystem() const;
+  void AddEntityToSystems(Entity entity);
 };
 
 template <typename T>
@@ -191,4 +183,27 @@ bool Registry::HasComponent(Entity entity) const {
   const auto entityId = entity.GetId();
 
   entityComponentSignatures[entityId].test(componentId);
+}
+
+template<typename T, typename ...TArgs>
+inline void Registry::AddSystem(TArgs && ...args) {
+  T* newSystem(new T(std::forward<TArgs>(args)...));
+  systems.insert(std::make_pair(std::type_index(typeid(T)), newSystem));
+}
+
+template<typename T>
+inline void Registry::RemoveSystem() {
+  auto system = systems.find(std::type_index(typeid(T)));
+  systems.erase(system);
+}
+
+template<typename T>
+inline bool Registry::HasSystem() const {
+  return systems.find(std::type_index(typeid(T))) != systems.end();
+}
+
+template<typename T>
+inline T& Registry::GetSystem() const {
+  auto system = systems.find(std::type_index(typeid(T)));
+  return *(std::static_pointer_cast<T>(system->second));
 }
