@@ -9,6 +9,7 @@
 Game::Game() {
   Logger::Log("Constructor called");
   isRunning = false;
+  registry = new Registry();
 
   // Initialize member vars
   renderer = nullptr;
@@ -59,7 +60,8 @@ void Game::Initialize() {
 
 void Game::Setup() {
   // TODO:
-  // Entity tank = registry.CreateEntity();
+  Entity tank = registry->CreateEntity();
+  Entity truck = registry->CreateEntity();
   // tank.AddComponent<TransformComponent>();
   // tank.AddComponent<BoxColliderComponent>();
   // tank.AddComponent<SpriteComponent>("./assets/images/tank.png");
