@@ -9,7 +9,7 @@
 Game::Game() {
   Logger::Log("Constructor called");
   isRunning = false;
-  registry = new Registry();
+  registry = std::make_unique<Registry>();
 
   // Initialize member vars
   renderer = nullptr;

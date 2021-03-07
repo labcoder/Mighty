@@ -1,10 +1,13 @@
 #pragma once
 
 #include <bitset>
+#include <memory>
 #include <set>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
+
+#include "../Logger/Logger.h"
 
 const unsigned int MAX_COMPONENTS = 32;
 
@@ -107,13 +110,23 @@ private:
   int numEntities = 0;
   std::set<Entity> entitiesToBeAdded;
   std::set<Entity> entitiesToBeDestroyed;
-  std::vector<IPool*> componentPools;
+  std::vector<std::shared_ptr<IPool>> componentPools;
   std::vector<Signature> entityComponentSignatures;
-  std::unordered_map<std::type_index, System*> systems;
+  std::unordered_map<std::type_index, std::shared_ptr<System>> systems;
 
 public:
+  /*
   Registry() = default;
   ~Registry() = default;
+  */
+
+  Registry() {
+    Logger::Log("Registry constructer called");
+  }
+
+  ~Registry() {
+    Logger::Log("Registry destructer called");
+  }
 
   void Update();
 
@@ -151,12 +164,12 @@ inline void Registry::AddComponent(Entity entity, TArgs && ...args) {
 
   // Create new pool if new
   if (!componentPools[componentId]) {
-    Pool<T>* newComponentPool = new Pool<T>();
+    std::shared_ptr<Pool<T>> newComponentPool = std::make_shared<Pool<T>>();
     componentPools[componentId] = newComponentPool;
   }
 
   // Fetch the proper pool and resize if necessary
-  Pool<T>& componentPool = Pool<T>(componentPools[componentId]);
+  std::shared_ptr<Pool<T>> componentPool = static_pointer_cast<Pool<T>>(componentPools[componentId]);
 
   if (entityId >= componentPool->GetSize()) {
     componentPool->Resize(numEntities);
@@ -188,7 +201,7 @@ bool Registry::HasComponent(Entity entity) const {
 
 template<typename T, typename ...TArgs>
 inline void Registry::AddSystem(TArgs && ...args) {
-  T* newSystem(new T(std::forward<TArgs>(args)...));
+  std::shared_ptr<T> newSystem = std::make_shared<T>(std::forward<TArgs>(args)...);
   systems.insert(std::make_pair(std::type_index(typeid(T)), newSystem));
 }
 

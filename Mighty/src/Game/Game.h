@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <SDL.h>
 #include "../ECS/ECS.h"
 
@@ -13,7 +14,7 @@ private:
   SDL_Window* window;
   SDL_Renderer* renderer;
 
-  Registry* registry;
+  std::unique_ptr<Registry> registry;
 
 public:
   Game();
